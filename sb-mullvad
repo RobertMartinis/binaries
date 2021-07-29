@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Prints the status of mullvad VPN in DWMBlocks.
+# 🦫🟢 Indicates online. 🦫🔴 Indicates offline. Also, a flag is shown for the current country you're connected to.
+# (Mole isn't available as an emoji at the moment, so a beaver will do.)
+
+ip=$(curl ifconfig.co)
+
+# TODO: Emoji flag instead of country code
+country=$(curl ipinfo.io/$ip | jq -r '.country')
+icon="🦫 "
+
+if ip link show | grep -q tun0; then
+    status="on"
+    button="🟢 "
+ else
+    status="off"
+    button="🔴 "
+fi
+
+
+case $BLOCK_BUTTON in
+    1) mullvad-vpn ;;
+    2) if [ "$status" == "on" ]; then
+           mullvad disconnect
+       else
+           mullvad connect
+       fi ;;
+    3) notify-send "🦫 Mullvad VPN" "\- Press to open Mullvad GUI
+
+Status: $button " ;;
+
+    6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+
+esac
+
+ printf "%s%s%s\n" "$icon" "$button" "$country"
