@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Displays a selection of countries to tunnel to using DWMMenu, and connects
+# to the selected one.
+
+
+chosen=$(cut -d ';' -f1 ~/.local/share/dmenu/mullvadpicker | dmenu -i -l 30 | sed "s/^.*country: //")
+code=$(cat ~/.local/share/dmenu/mullvadpicker | grep $chosen | sed "s/^.*code: //")
+status=$(mullvad status | cut -d ':' -f2 | awk '{print $1}')
+
+[ -z "$chosen" ] && exit
+
+
+if [ $code == "CDC" ]
+then
+    if [$status == "Disconnected"]
+    then mullvad connect
+    else
+        mullvad disconnect
+    fi
+else
+    mullvad relay set location $code
+fi
