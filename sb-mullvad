@@ -4,10 +4,10 @@
 # 🦫🟢 Indicates online. 🦫🔴 Indicates offline. Also, a flag is shown for the current country you're connected to.
 # (Mole isn't available as an emoji at the moment, so a beaver will do.)
 
-ip=$(curl ifconfig.co)
 
 # TODO: Emoji flag instead of country code
-country=$(curl ipinfo.io/$ip | jq -r '.country')
+country=$(geoiplookup "$(wget http://ipinfo.io/ip -qO -)" | awk '{print $4}' | sed 's/.$//')
+
 icon="🦫 "
 
 if ip link show | grep -q tun0; then
