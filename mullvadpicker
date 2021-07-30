@@ -13,7 +13,7 @@ status=$(mullvad status | cut -d ':' -f2 | awk '{print $1}')
 
 if [ $code == "CDC" ]
 then
-    if [$status == "Disconnected"]
+    if [ $status == "Disconnected" ]
     then mullvad connect
     else
         mullvad disconnect
